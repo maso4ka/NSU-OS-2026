@@ -1,24 +1,33 @@
+#include <sys/types.h>
 #include <stdio.h>
 #include <time.h>
+#include <stdlib.h>
 
-#define PST_OFFSET (8 * 3600)
+extern char *tzname[];
 
-int main(void)
+#define TIME_ZONE "PST8PDT"
+
+main()
 {
     time_t now;
     struct tm *sp;
 
-    time(&now);
+    (void) time(&now);
 
-    now -= PST_OFFSET;
-    sp = gmtime(&now);
+    printf("%s", ctime(&now));
 
-    printf("%d/%d/%d %d:%02d PST\n",
-           sp->tm_mon + 1,
-           sp->tm_mday,
-           sp->tm_year + 1900,
-           sp->tm_hour,
-           sp->tm_min);
+    setenv("TZ", TIME_ZONE, 1);
+    tzset();
 
-    return 0;
+    sp = localtime(&now);
+
+    printf("%d/%d/%02d %d:%02d %s\n",
+        sp->tm_mon + 1,
+        sp->tm_mday,
+        sp->tm_year + 1900,
+        sp->tm_hour,
+        sp->tm_min,
+        tzname[sp->tm_isdst]);
+
+    exit(0);
 }
