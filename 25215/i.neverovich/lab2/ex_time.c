@@ -1,30 +1,24 @@
-#include <sys/types.h>
 #include <stdio.h>
 #include <time.h>
-#include <stdlib.h>
 
-int main()
+#define PST_OFFSET (8 * 3600)
+
+int main(void)
 {
     time_t now;
     struct tm *sp;
 
-    (void) time(&now);
+    time(&now);
 
+    now -= PST_OFFSET;
     sp = gmtime(&now);
 
-    sp->tm_hour -= 8;
+    printf("%d/%d/%d %d:%02d PST\n",
+           sp->tm_mon + 1,
+           sp->tm_mday,
+           sp->tm_year + 1900,
+           sp->tm_hour,
+           sp->tm_min);
 
-    if (sp->tm_hour < 0) {
-        sp->tm_hour += 24;
-        sp->tm_mday--;
-    }
-
-    printf("%d/%d/%02d %d:%02d PST\n",
-        sp->tm_mon + 1,
-        sp->tm_mday,
-        sp->tm_year,
-        sp->tm_hour,
-        sp->tm_min);
-
-    exit(0);
+    return 0;
 }
